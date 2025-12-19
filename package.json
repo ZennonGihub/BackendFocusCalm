@@ -1,0 +1,43 @@
+{
+  "name": "backendfocus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --watch src/index.js",
+    "dev": "node --watch api/index.js",
+    "postinstall": "prisma generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/boom": "^10.0.1",
+    "@sequelize/postgres": "^7.0.0-alpha.47",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "joi": "^18.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.1",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0",
+    "serverless-http": "^4.0.0",
+    "swagger-ui-dist": "^5.29.3",
+    "swagger-ui-express": "^5.0.1",
+    "tsx": "^4.21.0",
+    "yamljs": "^0.3.0"
+  },
+  "prisma": {
+    "seed": "npx tsx prisma/seed.ts"
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.19.0",
+    "prisma": "^6.19.0"
+  }
+}

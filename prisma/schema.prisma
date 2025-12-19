@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+
+  @@map("roles")
+}
+
+model Status {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  tasks Task[]
+
+  @@map("status")
+}
+
+model Auth {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)   
+  user      User?
+  @@map("auth")
+}
+
+model User {
+  id        Int               @id @default(autoincrement())
+  username  String
+  roleId    Int               @map("id_role") @default(3)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  authId    Int               @unique @map("id_auth")
+  sessions  PomodoroSession[]
+  tasks     Task[]
+  auth      Auth              @relation(fields: [authId], references: [id], onDelete: Cascade)
+  role      Role              @relation(fields: [roleId], references: [id])
+
+  @@map("users")
+}
+
+model Task {
+  id                 Int               @id @default(autoincrement())
+  title              String
+  body               String?
+  statusId           Int               @default(1) @map("id_status")
+  estimatedPomodoros Int               @default(1) @map("estimated_pomodoros")
+  completedPomodoros Int               @default(0) @map("completed_pomodoros")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  removedAt   DateTime? @map("removed_at") @db.Timestamptz(3)
+  userId             Int               @map("id_user")
+  sessions           PomodoroSession[]
+  status             Status            @relation(fields: [statusId], references: [id])
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
+}
+
+model PomodoroSession {
+  id              Int       @id @default(autoincrement())
+  startTime       DateTime  @default(now()) @map("start_time") @db.Timestamptz(3)
+  endTime         DateTime? @map("end_time") @db.Timestamptz(3)
+  durationMinutes Int?      @map("duration_minutes")
+  completed       Boolean   @default(false)
+  type         Int          
+  taskId          Int?      @map("id_task")
+  userId          Int       @map("id_user")
+  task            Task?     @relation(fields: [taskId], references: [id])
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startTime]) 
+  @@map("pomodoro_sessions")
+}

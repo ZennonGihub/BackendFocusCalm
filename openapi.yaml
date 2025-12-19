@@ -1,0 +1,240 @@
+openapi: 3.1.1
+info:
+  title: Focus Calm
+  version: 1.0.0
+  description: Aplicación para estudios
+servers:
+  - url: http://localhost:3000
+
+tags:
+  - name: auth
+    description: Rutas de autenticación
+  - name: users
+    description: Rutas para la gestión de usuarios
+  - name: tasks
+    description: Rutas para la gestión de tareas
+
+paths:
+  /api/register:
+    post:
+      summary: Registrar un nuevo usuario
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: jondoe
+                email:
+                  type: string
+                  example: jon.doe@example.com
+                password:
+                  type: string
+                  example: s3cur3p4ssw0rd
+      responses:
+        "201":
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  email:
+                    type: string
+                  createdAt:
+                    type: string
+                  updatedAt:
+                    type: string
+        "400":
+          description: Error en la solicitud
+
+  /api/login:
+    post:
+      summary: Iniciar sesión de usuario
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: jon.doe@example.com
+                password:
+                  type: string
+                  example: s3cur3p4ssw0rd
+      responses:
+        "200":
+          description: Inicio de sesión exitoso
+        "401":
+          description: Credenciales inválidas
+
+  /api/users:
+    get:
+      summary: Obtener todos los usuarios
+      tags:
+        - users
+      responses:
+        "200":
+          description: Lista de usuarios
+        "204":
+          description: No hay usuarios
+
+  /api/users/{id}:
+    get:
+      summary: Obtener un usuario por ID
+      tags:
+        - users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Detalles del usuario
+        "404":
+          description: Usuario no encontrado
+    put:
+      summary: Actualizar un usuario por ID
+      tags:
+        - users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+      responses:
+        "200":
+          description: Usuario actualizado
+        "404":
+          description: Usuario no encontrado
+    delete:
+      summary: Eliminar un usuario por ID
+      tags:
+        - users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Usuario eliminado
+        "404":
+          description: Usuario no encontrado
+
+  /api/tasks:
+    get:
+      summary: Obtener todas las tareas
+      tags:
+        - tasks
+      responses:
+        "200":
+          description: Lista de tareas
+        "204":
+          description: No hay tareas
+    post:
+      summary: Crear una nueva tarea
+      tags:
+        - tasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Estudiar Express.js
+                description:
+                  type: string
+                  example: Leer la documentación y hacer un ejemplo de rutas
+      responses:
+        "201":
+          description: Tarea creada exitosamente
+
+  /api/tasks/{id}:
+    get:
+      summary: Obtener una tarea por ID
+      tags:
+        - tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Detalles de la tarea
+        "404":
+          description: Tarea no encontrada
+    put:
+      summary: Actualizar una tarea por ID
+      tags:
+        - tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+      responses:
+        "200":
+          description: Tarea actualizada
+        "404":
+          description: Tarea no encontrada
+    delete:
+      summary: Eliminar una tarea por ID
+      tags:
+        - tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Tarea eliminada
+        "404":
+          description: Tarea no encontrada
