@@ -5,10 +5,6 @@ import {
   changeTask,
   remove,
   createTask,
-  streak,
-  createSession,
-  getExit,
-  averageFocus,
 } from "./tasks.controller.js";
 import validarHandler from "../../middlewares/validatorHandler.middleware.js";
 import {
@@ -29,19 +25,6 @@ router.get(
   find
 );
 
-router.get(
-  "/averageFocus",
-  passport.authenticate("jwt", { session: false }),
-  //checkRoles(1, 2),
-  averageFocus
-);
-
-router.get(
-  "/streak",
-  passport.authenticate("jwt", { session: false }),
-  //checkRoles(1, 2),
-  streak
-);
 router.post(
   "/",
   passport.authenticate("jwt", { session: false }),
@@ -50,20 +33,6 @@ router.post(
   createTask
 );
 
-router.get(
-  "/exito",
-  passport.authenticate("jwt", { session: false }),
-  validarHandler(createTaskSchema, "body"),
-  //checkRoles(1, 2),
-  getExit
-);
-
-router.post(
-  "/createSession/:id",
-  passport.authenticate("jwt", { session: false }),
-  //checkRoles(1, 2),
-  createSession
-);
 router.get(
   "/:id",
   passport.authenticate("jwt", { session: false }),
