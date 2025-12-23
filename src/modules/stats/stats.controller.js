@@ -6,25 +6,23 @@ const service = new TasksServices();
 export const getDashboardStats = async (req, res, next) => {
   try {
     const userId = req.user.id;
-
-    const [streak, successRate, averageFocus] = await Promise.all([
+    const [streak, successRate, averageFocus, activeTask] = await Promise.all([
       service.streak(userId),
       service.successRate(userId),
       service.averageFocus(userId),
-      service.activateTask(userId),
+      service.getActiveTaskProgress(userId),
     ]);
 
     res.json({
       streak,
       successRate,
       averageFocus,
-      activateTask,
+      activeTask,
     });
   } catch (error) {
     next(error);
   }
 };
-
 export const createSession = async (req, res, next) => {
   try {
     const streak = await service.createSession(

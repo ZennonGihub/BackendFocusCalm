@@ -1,5 +1,5 @@
 import express from "express";
-import { getDashboardStats } from "./stats.controller.js";
+import { getDashboardStats, createSession } from "./stats.controller.js";
 import validarHandler from "../../middlewares/validatorHandler.middleware.js";
 import { createTaskSchema } from "../../schemas/tasks.schema.js";
 import passport from "passport";
@@ -11,6 +11,13 @@ router.get(
   "/dashboard",
   passport.authenticate("jwt", { session: false }),
   getDashboardStats
+);
+
+router.post(
+  "/createSession/:id",
+  passport.authenticate("jwt", { session: false }),
+  //checkRoles(1, 2),
+  createSession
 );
 
 /*
@@ -36,11 +43,6 @@ router.get(
   getExit
 );
 
-router.post(
-  "/createSession/:id",
-  passport.authenticate("jwt", { session: false }),
-  //checkRoles(1, 2),
-  createSession
-);
+
 */
 export default router;

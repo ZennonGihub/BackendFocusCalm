@@ -31,7 +31,7 @@ class TasksServices {
     await prisma.task.updateMany({
       where: {
         userId: Number(userId),
-        status: "IN_PROGRESS",
+        status: "en progreso",
       },
       data: { status: "PENDING" },
     });
@@ -42,7 +42,7 @@ class TasksServices {
         userId: Number(userId),
       },
       data: {
-        status: "IN_PROGRESS",
+        status: "en progreso",
       },
     });
 
@@ -50,9 +50,11 @@ class TasksServices {
   }
 
   async findTaskProgress(userId) {
-    const task = await prisma.task.findUnique({
+    const task = await prisma.task.findFirst({
       where: { userId: Number(userId), status: "en progreso" },
       select: {
+        title: true,
+        estimatedPomodoros: true,
         pomodoroSessions: {
           select: { completed: true },
         },
@@ -80,8 +82,7 @@ class TasksServices {
   }
 
   async update(id, data) {
-    const { title, body, estimated_pomodoros } = data;
-    console.log("DATA en el service de update: ", data);
+    const { title, body, estimated_pomodoros, completed } = data;
     if (!id || !data) {
       throw boom.badData("No se ingreso la informacion");
     }
@@ -91,6 +92,7 @@ class TasksServices {
         title,
         body,
         estimatedPomodoros: estimated_pomodoros,
+        completed,
       },
     });
     return rta;

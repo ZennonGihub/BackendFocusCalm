@@ -5,6 +5,7 @@ import {
   changeTask,
   remove,
   createTask,
+  activateTask,
 } from "./tasks.controller.js";
 import validarHandler from "../../middlewares/validatorHandler.middleware.js";
 import {

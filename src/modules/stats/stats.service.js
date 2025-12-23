@@ -101,6 +101,29 @@ class StastService {
     // Retornamos el promedio redondeado
     return Math.round(promedio);
   }
+
+  async getActiveTaskProgress(userId) {
+    const task = await prisma.task.findFirst({
+      where: {
+        userId: Number(userId),
+        status: "en progreso",
+      },
+      include: {
+        pomodoroSessions: {
+          where: { completed: true },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    if (!task) return null;
+
+    return {
+      title: task.title,
+      completed: task.pomodoroSessions.length,
+      estimated: task.estimatedPomodoros || 1,
+    };
+  }
 }
 
 export default StastService;

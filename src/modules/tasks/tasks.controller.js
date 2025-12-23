@@ -6,7 +6,7 @@ export const findTask = async (req, res, next) => {
   const { id } = req.params;
   try {
     const task = await service.findOne(id);
-    res.status(201).json({ task });
+    res.status(200).json(task);
   } catch (error) {
     next(error);
   }
@@ -15,7 +15,7 @@ export const findTask = async (req, res, next) => {
 export const find = async (req, res, next) => {
   try {
     const tasks = await service.find();
-    res.status(201).json(tasks);
+    res.status(200).json(tasks);
   } catch (error) {
     next(error);
   }
@@ -23,10 +23,10 @@ export const find = async (req, res, next) => {
 
 export const createTask = async (req, res, next) => {
   try {
-    const user = req.user;
+    const userId = req.user.id;
     const task = {
       ...req.body,
-      userId: user.user.id,
+      userId: userId,
     };
     const savedTask = await service.create(task);
     res.status(201).json(savedTask);
@@ -56,6 +56,7 @@ export const changeTask = async (req, res, next) => {
     next(error);
   }
 };
+
 export const remove = async (req, res, next) => {
   try {
     const removeTask = await service.delete(req.params.id);
