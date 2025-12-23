@@ -35,6 +35,19 @@ export const createTask = async (req, res, next) => {
   }
 };
 
+export const activateTask = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const task = await service.activateTask(userId, id);
+
+    res.json(task);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const changeTask = async (req, res, next) => {
   try {
     const newTask = await service.update(req.params.id, req.body);

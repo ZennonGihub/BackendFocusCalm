@@ -27,6 +27,28 @@ class TasksServices {
     return tasks;
   }
 
+  async activateTask(userId, taskId) {
+    await prisma.task.updateMany({
+      where: {
+        userId: Number(userId),
+        status: "IN_PROGRESS",
+      },
+      data: { status: "PENDING" },
+    });
+
+    const activeTask = await prisma.task.update({
+      where: {
+        id: Number(taskId),
+        userId: Number(userId),
+      },
+      data: {
+        status: "IN_PROGRESS",
+      },
+    });
+
+    return activeTask;
+  }
+
   async findTaskProgress(userId) {
     const task = await prisma.task.findUnique({
       where: { userId: Number(userId), status: "en progreso" },

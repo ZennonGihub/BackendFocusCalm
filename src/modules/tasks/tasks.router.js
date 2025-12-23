@@ -33,6 +33,12 @@ router.post(
   createTask
 );
 
+router.patch(
+  "/:id/activate",
+  passport.authenticate("jwt", { session: false }),
+  activateTask
+);
+
 router.get(
   "/:id",
   passport.authenticate("jwt", { session: false }),
