@@ -6,6 +6,7 @@ dotenv.config();
 export async function createAccesToken(user) {
   const payload = {
     id: user.id,
+    role: user.role,
   };
   const token = jwt.sign(payload, process.env.SECRET_KEY, {
     expiresIn: "15m",
@@ -17,7 +18,7 @@ export async function createAccesToken(user) {
   return { token: token, refreshToken: refreshToken };
 }
 
-export async function refreshRoken(token) {
+export async function refreshToken(token) {
   const payload = jwt.verify(token, process.env.JWT_REFRESH);
   const newToken = jwt.sign({ id: payload.id }, process.env.SECRET_KEY, {
     expiresIn: "15m",

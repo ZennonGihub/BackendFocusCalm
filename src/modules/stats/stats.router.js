@@ -1,10 +1,5 @@
 import express from "express";
-import {
-  streak,
-  createSession,
-  getExit,
-  averageFocus,
-} from "./stats.controller.js";
+import { getDashboardStats } from "./stats.controller.js";
 import validarHandler from "../../middlewares/validatorHandler.middleware.js";
 import { createTaskSchema } from "../../schemas/tasks.schema.js";
 import passport from "passport";
@@ -12,6 +7,13 @@ import { checkRoles } from "../../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
+router.get(
+  "/dashboard",
+  passport.authenticate("jwt", { session: false }),
+  getDashboardStats
+);
+
+/*
 router.get(
   "/averageFocus",
   passport.authenticate("jwt", { session: false }),
@@ -40,5 +42,5 @@ router.post(
   //checkRoles(1, 2),
   createSession
 );
-
+*/
 export default router;
