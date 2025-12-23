@@ -11,7 +11,7 @@ export const getDashboardStats = async (req, res, next) => {
       service.streak(userId),
       service.successRate(userId),
       service.averageFocus(userId),
-      service.getActiveTaskProgress(userId),
+      service.activateTask(userId),
     ]);
 
     res.json({
