@@ -27,6 +27,23 @@ class TasksServices {
     return tasks;
   }
 
+  async findTaskProgress(userId) {
+    const task = await prisma.task.findUnique({
+      where: { userId: Number(userId), status: "en progreso" },
+      select: {
+        pomodoroSessions: {
+          select: { completed: true },
+        },
+      },
+    });
+    if (!task) return null;
+    return {
+      title: task.title,
+      completed: task.pomodoroSessions.length,
+      estimatedPomodoros: task.estimatedPomodoros || 1,
+    };
+  }
+
   async findOne(id) {
     const task = await prisma.task.findUnique({
       where: { id: Number(id) },

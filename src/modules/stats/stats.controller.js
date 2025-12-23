@@ -1,3 +1,4 @@
+import { act } from "react";
 import TasksServices from "./stats.service.js";
 
 const service = new TasksServices();
@@ -11,12 +12,14 @@ export const getDashboardStats = async (req, res, next) => {
       service.streak(userId),
       service.successRate(userId),
       service.averageFocus(userId),
+      service.getActiveTaskProgress(userId),
     ]);
 
     res.json({
       streak,
       successRate,
       averageFocus,
+      activeTask,
     });
   } catch (error) {
     next(error);
