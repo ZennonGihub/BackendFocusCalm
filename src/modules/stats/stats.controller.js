@@ -1,4 +1,3 @@
-import { act } from "react";
 import TasksServices from "./stats.service.js";
 
 const service = new TasksServices();
