@@ -18,7 +18,7 @@ export const getDashboardStats = async (req, res, next) => {
       streak,
       successRate,
       averageFocus,
-      activeTask,
+      activateTask,
     });
   } catch (error) {
     next(error);
