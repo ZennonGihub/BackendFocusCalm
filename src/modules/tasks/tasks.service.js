@@ -3,16 +3,20 @@ import { prisma } from "../../db/prisma.js";
 
 class TasksServices {
   constructor() {}
+
   async create(data) {
-    if (data === undefined) {
-      throw boom.badRequest("No se ingreso la informacion");
-    }
+    if (!data) throw boom.badRequest("No se ingreso la informacion");
     const { title, userId, estimated_pomodoros } = data;
+
     const newTask = await prisma.task.create({
       data: {
         title,
         estimatedPomodoros: estimated_pomodoros,
         userId: userId,
+        completed: false,
+        status: {
+          connect: { name: "pendiente" },
+        },
       },
     });
     return newTask;
@@ -22,7 +26,9 @@ class TasksServices {
     const tasks = await prisma.task.findMany({
       include: {
         status: true,
-        completedPomodoros: true,
+        sessions: {
+          where: { completed: true },
+        },
       },
       orderBy: { id: "desc" },
     });
@@ -30,12 +36,25 @@ class TasksServices {
   }
 
   async activateTask(userId, taskId) {
+    const pendingStatus = await prisma.status.findUnique({
+      where: { name: "pendiente" },
+    });
+    const progressStatus = await prisma.status.findUnique({
+      where: { name: "en progreso" },
+    });
+
+    if (!pendingStatus || !progressStatus) {
+      throw boom.internal("Error de configuración de estados");
+    }
+
     await prisma.task.updateMany({
       where: {
         userId: Number(userId),
-        status: "en progreso",
+        statusId: progressStatus.id,
       },
-      data: { status: "PENDING" },
+      data: {
+        statusId: pendingStatus.id,
+      },
     });
 
     const activeTask = await prisma.task.update({
@@ -44,17 +63,21 @@ class TasksServices {
         userId: Number(userId),
       },
       data: {
-        status: "en progreso",
+        status: {
+          connect: { name: "en progreso" },
+        },
       },
     });
 
     return activeTask;
   }
 
-  // Sirve para traer la informacion de la tarea activa
   async findTaskProgress(userId) {
     const task = await prisma.task.findFirst({
-      where: { userId: Number(userId), status: "en progreso" },
+      where: {
+        userId: Number(userId),
+        status: { name: "en progreso" },
+      },
       select: {
         title: true,
         estimatedPomodoros: true,
@@ -63,7 +86,9 @@ class TasksServices {
         },
       },
     });
+
     if (!task) return null;
+
     return {
       title: task.title,
       completed: task.pomodoroSessions.length,
@@ -74,9 +99,7 @@ class TasksServices {
   async findOne(id) {
     const task = await prisma.task.findUnique({
       where: { id: Number(id) },
-      include: {
-        status: true,
-      },
+      include: { status: true },
     });
     if (!task) {
       throw boom.notFound("Tarea no encontrada");
@@ -85,18 +108,18 @@ class TasksServices {
   }
 
   async update(id, data) {
-    const { title, body, estimated_pomodoros, completed } = data;
-    if (!id || !data) {
-      throw boom.badData("No se ingreso la informacion");
-    }
+    if (!id || !data) throw boom.badData("No se ingreso la informacion");
+
+    const updateData = {};
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.body !== undefined) updateData.body = data.body;
+    if (data.estimated_pomodoros !== undefined)
+      updateData.estimatedPomodoros = data.estimated_pomodoros;
+    if (data.completed !== undefined) updateData.completed = data.completed;
+
     const rta = await prisma.task.update({
       where: { id: Number(id) },
-      data: {
-        title,
-        body,
-        estimatedPomodoros: estimated_pomodoros,
-        completed,
-      },
+      data: updateData,
     });
     return rta;
   }

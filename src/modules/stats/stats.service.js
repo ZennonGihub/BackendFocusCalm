@@ -1,9 +1,8 @@
-import boom from "@hapi/boom";
 import { prisma } from "../../db/prisma.js";
 
-class StastService {
+class StatsService {
   async streak(userId) {
-    // Obtengo todos las sesiones COMPLETADAS del usuario
+    // Obtenemos todos las sesiones COMPLETADAS del usuario
     const sessions = await prisma.pomodoroSession.findMany({
       where: { userId: Number(userId), completed: true },
       select: { startTime: true },
@@ -11,7 +10,6 @@ class StastService {
     });
 
     const daysStreak = new Set();
-    // Llenamos el set con fecha no duplicadas
     sessions.forEach((session) => {
       const date = new Date(session.startTime);
       daysStreak.add(date.toDateString());
@@ -67,18 +65,30 @@ class StastService {
 
   async createSession(userId, taskId, body) {
     const { durationMinutes, date, type } = body;
+
     const endTime = new Date(date);
-    const startTime = new Date(endTime.getTime() - durationMinutes);
-    console.log(startTime, endTime, durationMinutes, type);
+    const msDuration = durationMinutes * 60 * 1000;
+    const startTime = new Date(endTime.getTime() - msDuration);
+
+    // Validación segura de taskId
+    const validTaskId = taskId ? Number(taskId) : null;
+
+    console.log("Guardando sesión:", {
+      startTime,
+      endTime,
+      durationMinutes,
+      type,
+    });
+
     const newSession = await prisma.pomodoroSession.create({
       data: {
-        userId: userId,
+        userId: Number(userId),
         startTime: startTime,
         endTime: endTime,
         durationMinutes: durationMinutes,
         completed: true,
         type: type,
-        taskId: Number(taskId),
+        taskId: validTaskId,
       },
     });
     return newSession;
@@ -107,10 +117,12 @@ class StastService {
     const task = await prisma.task.findFirst({
       where: {
         userId: Number(userId),
-        status: "en progreso",
+        status: {
+          name: "en progreso",
+        },
       },
       include: {
-        pomodoroSessions: {
+        sessions: {
           where: { completed: true },
         },
       },
@@ -120,11 +132,12 @@ class StastService {
     if (!task) return null;
 
     return {
+      id: task.id,
       title: task.title,
-      completed: task.pomodoroSessions.length,
+      completed: task.sessions.length,
       estimated: task.estimatedPomodoros || 1,
     };
   }
 }
 
-export default StastService;
+export default StatsService;

@@ -7,9 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Role {
   id    Int    @id @default(autoincrement())
-  name  String @unique
+  name  String @unique  
   users User[]
 
   @@map("roles")
@@ -17,9 +18,8 @@ model Role {
 
 model Status {
   id    Int    @id @default(autoincrement())
-  name  String @unique
+  name  String @unique 
   tasks Task[]
-
   @@map("status")
 }
 
@@ -29,53 +29,54 @@ model Auth {
   password  String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)   
-  user      User?
+  user      User?  
   @@map("auth")
 }
 
 model User {
-  id        Int               @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   username  String
-  roleId    Int               @map("id_role") @default(3)
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
-  authId    Int               @unique @map("id_auth")
+  roleId    Int      @map("id_role") @default(1)
+  role      Role     @relation(fields: [roleId], references: [id])
+  authId    Int      @unique @map("id_auth")
+  auth      Auth     @relation(fields: [authId], references: [id], onDelete: Cascade)
   sessions  PomodoroSession[]
   tasks     Task[]
-  auth      Auth              @relation(fields: [authId], references: [id], onDelete: Cascade)
-  role      Role              @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   @@map("users")
 }
 
+
 model Task {
-  id                 Int               @id @default(autoincrement())
+  id                 Int      @id @default(autoincrement())
   title              String
   body               String?
-  statusId           Int               @default(1) @map("id_status")
-  estimatedPomodoros Int               @default(1) @map("estimated_pomodoros")
-  completedPomodoros Int               @default(0) @map("completed_pomodoros")
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
-  removedAt   DateTime? @map("removed_at") @db.Timestamptz(3)
-  userId             Int               @map("id_user")
+  statusId           Int      @map("id_status")
+  status             Status   @relation(fields: [statusId], references: [id])
+  estimatedPomodoros Int      @default(1) @map("estimated_pomodoros")
+  completed          Boolean  @default(false) 
+  userId             Int      @map("id_user")
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   sessions           PomodoroSession[]
-  status             Status            @relation(fields: [statusId], references: [id])
-  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt          DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  removedAt          DateTime? @map("removed_at") @db.Timestamptz(3)
   @@map("tasks")
 }
+
 
 model PomodoroSession {
   id              Int       @id @default(autoincrement())
   startTime       DateTime  @default(now()) @map("start_time") @db.Timestamptz(3)
   endTime         DateTime? @map("end_time") @db.Timestamptz(3)
   durationMinutes Int?      @map("duration_minutes")
-  completed       Boolean   @default(false)
-  type         Int          
+  completed       Boolean   @default(false)  
+  type            String    
   taskId          Int?      @map("id_task")
-  userId          Int       @map("id_user")
   task            Task?     @relation(fields: [taskId], references: [id])
+  userId          Int       @map("id_user")
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, startTime]) 
