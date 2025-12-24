@@ -22,7 +22,7 @@ class TasksServices {
     const tasks = await prisma.task.findMany({
       include: {
         status: true,
-        pomodoroSessions: { where: { completed: true } },
+        completedPomodoros: true,
       },
       orderBy: { id: "desc" },
     });
