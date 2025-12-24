@@ -1,16 +1,15 @@
-
 # 🍅 API FocusCalm 🍅
 
 A brief description of what this project does and who it's for
 
 API RESTful completa para una aplicación de productividad basada en la técnica Pomodoro. Diseñada con una arquitectura modular y escalable en Node.js, permite la gestión integral de tareas, sesiones de enfoque, estadísticas en tiempo real y seguridad mediante JWT y gestión de roles.
 
-
 ## 🔑 Credenciales para probar la API
+
 Para probar los endpoints protegidos, puedes registrar un usuario nuevo o utilizar las siguientes credenciales (si ejecutaste el seed):
 
-| Usuario | Contraseña |
-|:---: | :---: |
+|       Usuario        | Contraseña |
+| :------------------: | :--------: |
 | `test@focuscalm.com` | `admin123` |
 
 📝 Cómo probar las rutas protegidas
@@ -27,6 +26,7 @@ Agrega el header: Authorization: Bearer <TU_TOKEN>.
 Agrega el header: api: <TU_API_KEY>
 
 ## 🏗️ Arquitectura y Diseño
+
 El proyecto sigue una arquitectura Monolítica Modular, diseñada para facilitar la escalabilidad y el mantenimiento, separando claramente las responsabilidades.
 
 Patrón de Diseño
@@ -43,8 +43,10 @@ Prisma (ORM): Abstrae la conexión y consultas a la base de datos PostgreSQL.
 🗂️ Diagrama Entidad-Relación
 La base de datos está normalizada, utilizando relaciones robustas para manejar el historial de sesiones y estados de tareas.
 
-![Diagrama de Base de Datos](./img/Diagrama.jpeg)
+![Diagrama de Base de Datos](./img/imagenDiagrama.jpeg)
+
 ## 🚀 Tecnologías
+
 Lenguaje y Base de Datos
 Node.js & Express: Arquitectura del servidor.
 
@@ -68,8 +70,11 @@ Utilidades:
 🌐 Cors: Gestión de acceso cruzado.
 
 ⚙️ Dotenv: Variables de entorno.
+
 ## ⚙️ Instalación y Configuración Local
+
 1. Clonar el repositorio
+
 ```bash
 git clone https://github.com/TuUsuario/FocusCalmBackend.git
 cd FocusCalmBackend
@@ -98,6 +103,6 @@ node prisma/seed.js
 npm run dev
 ```
 
-
 ## 👨‍💻 Desarrollado por [Diego Araya]
+
 Proyecto de Portafolio - Full Stack Developer
