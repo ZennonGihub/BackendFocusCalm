@@ -102,6 +102,7 @@ class StastService {
     return Math.round(promedio);
   }
 
+  // Buscar la tarea activa y su progreso
   async getActiveTaskProgress(userId) {
     const task = await prisma.task.findFirst({
       where: {

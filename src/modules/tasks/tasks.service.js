@@ -22,7 +22,9 @@ class TasksServices {
     const tasks = await prisma.task.findMany({
       include: {
         status: true,
+        pomodoroSessions: { where: { completed: true } },
       },
+      orderBy: { id: "desc" },
     });
     return tasks;
   }
@@ -49,6 +51,7 @@ class TasksServices {
     return activeTask;
   }
 
+  // Sirve para traer la informacion de la tarea activa
   async findTaskProgress(userId) {
     const task = await prisma.task.findFirst({
       where: { userId: Number(userId), status: "en progreso" },
